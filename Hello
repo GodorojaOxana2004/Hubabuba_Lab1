@@ -1,6 +1,73 @@
-include <iostream>
+#include <iostream>
+using namespace std;
+
+// Базовый класс Сторона
+class Side {
+protected:
+    double length; // Длина стороны
+
+public:
+    // Конструктор для установки длины стороны
+    Side(double l) : length(l) {}
+
+    // Виртуальный деструктор
+    virtual ~Side() {}
+};
+
+// Производный класс Квадрат
+class Square : public Side {
+public:
+    // Конструктор для квадрата
+    Square(double l) : Side(l) {}
+
+    // Метод для вычисления площади квадрата
+    double Area() {
+        return length * length;
+    }
+};
+
+// Производный класс Куб
+class Cube : public Square {
+private:
+    double wall_thickness; // Толщина стенки куба
+
+public:
+    // Конструктор для куба
+    Cube(double l, double w) : Square(l), wall_thickness(w) {}
+
+    // Метод для вычисления объема куба
+    double Volume() {
+        double inner_length = length - 2 * wall_thickness; // Внутренняя длина стороны куба
+        return inner_length > 0 ? inner_length * inner_length * inner_length : 0;
+    }
+
+    // Метод для вывода характеристик куба
+    void DisplayProperties() {
+        cout << "Длина стороны: " << length << " см" << endl;
+        cout << "Толщина стенки: " << wall_thickness << " см" << endl;
+        cout << "Объем куба: " << Volume() << " куб.см" << endl;
+    }
+};
 
 int main() {
-    cout << "Hello World!";
+    // Создание двух кубов
+    Cube cube1(10, 1); // Куб с длиной стороны 10 см и толщиной стенки 1 см
+    Cube cube2(15, 1.5); // Куб с длиной стороны 15 см и толщиной стенки 1.5 см
+
+    // Определение меньшего куба и вычисление, сколько меньших кубов нужно, чтобы заполнить больший
+    Cube smaller_cube = (cube1.Volume() < cube2.Volume()) ? cube1 : cube2;
+    Cube larger_cube = (cube1.Volume() >= cube2.Volume()) ? cube1 : cube2;
+
+    double num_smaller_cubes = larger_cube.Volume() / smaller_cube.Volume();
+
+    // Вывод характеристик кубов
+    cout << "Характеристики первого куба:" << endl;
+    cube1.DisplayProperties();
+    cout << "\nХарактеристики второго куба:" << endl;
+    cube2.DisplayProperties();
+
+    // Вывод информации о том, сколько меньших кубов нужно, чтобы заполнить больший
+    cout << "\nЧтобы заполнить больший куб, необходимо " << num_smaller_cubes << " меньших кубов." << endl;
+
     return 0;
 }
